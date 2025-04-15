@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Sequence for User ID -->
+    <changeSet id="0001-create-user-sequence" author="samusceva">
+        <createSequence sequenceName="user_sequence" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <!-- User Table -->
+    <changeSet id="0002-create-user-table" author="samusceva">
+        <createTable tableName="_user">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="firstname" type="varchar(255)"/>
+            <column name="lastname" type="varchar(255)"/>
+            <column name="date_of_birth" type="date"/>
+            <column name="email" type="varchar(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)"/>
+            <column name="account_locked" type="boolean"/>
+            <column name="enabled" type="boolean"/>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Role Table -->
+    <changeSet id="0003-create-role-table" author="samusceva">
+        <createTable tableName="role">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp"/>
+        </createTable>
+
+        <loadData
+                file="db/data/role.csv"
+                separator=";"
+                tableName="role"
+                usePreparedStatements="true">
+            <column name="id" type="numeric"/>
+            <column name="name" type="string"/>
+            <column name="created_date" type="datetime"/>
+        </loadData>
+    </changeSet>
+
+    <!-- Join Table for User-Role -->
+    <changeSet id="0004-create-user-role-table" author="samusceva">
+        <createTable tableName="_user_roles">
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="roles_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="_user_roles" columnNames="user_id, roles_id"/>
+
+        <addForeignKeyConstraint baseTableName="_user_roles"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_user_roles_user"/>
+
+        <addForeignKeyConstraint baseTableName="_user_roles"
+                                 baseColumnNames="roles_id"
+                                 referencedTableName="role"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_user_roles_role"/>
+    </changeSet>
+
+    <!-- Sequence for Token ID -->
+    <changeSet id="0005-create-token-sequence" author="samusceva">
+        <createSequence sequenceName="token_sequence" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <!-- Token Table -->
+    <changeSet id="0006-create-token-table" author="samusceva">
+        <createTable tableName="token">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="token" type="varchar(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="created_at" type="timestamp"/>
+            <column name="expires_at" type="timestamp"/>
+            <column name="validated_at" type="timestamp"/>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="token"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_token_user"/>
+    </changeSet>
+</databaseChangeLog>

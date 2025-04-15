@@ -28,13 +28,14 @@ import static jakarta.persistence.FetchType.EAGER;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
- @Entity
- @Table(name = "_user")
- @EntityListeners(AuditingEntityListener.class)
+@Entity
+@Table(name = "_user")
+@EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails, Principal {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userSequenceGenerator")
+    @SequenceGenerator(name = "userSequenceGenerator", sequenceName = "user_sequence", allocationSize = 1)
     private Integer id;
     private String firstname;
     private String lastname;

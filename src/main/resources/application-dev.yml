@@ -3,21 +3,46 @@ spring:
     url: jdbc:postgresql://localhost:5432/general
     username: postgres
     password: postgres
+    hikari:
+      poolName: Hikari
+      auto-commit: false
     driver-class-name: org.postgresql.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+  data:
+    jpa:
+      repositories:
+        bootstrap-mode: deferred
   jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: false
     properties:
       hibernate:
-        format_sql: true
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+          batch_size: 25
+        query:
+          fail_on_pagination_over_collection_fetch: true
+          in_clause_parameter_padding: true
+        generate_statistics: false
+        order_updates: true
+        connection:
+          provider_disables_autocommit: true
+        order_inserts: true
+        default_schema: my_life
+    hibernate:
+      ddl-auto: validate
+      naming:
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    open-in-view: false
+  liquibase:
+    change-log: classpath:db/changelog/master.xml
+    default-schema: my_life
+    contexts: dev
+#    drop-first: true
   mail:
     host: localhost
     port: 1025
-    username: ali
-    password: ali
+    username: samusceva
+    password: samusceva
     properties:
       mail:
         smtp:
