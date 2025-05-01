@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>it.samusceva</groupId>
-	<artifactId>my-life</artifactId>
+	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>my-life</name>
-	<description>My life project</description>
+	<name>backend</name>
+	<description>Spring boot template for jwt token auth</description>
 	<url/>
 	<licenses>
 		<license/>
